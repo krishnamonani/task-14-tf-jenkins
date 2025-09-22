@@ -1,10 +1,11 @@
 pipeline {
     agent { label 'sample-agent' }
     environment {
-        AWS_CREDENTIALS = credentials('aws-KrishnaIAM-keys')
+        // AWS credentials ID from Jenkins Credentials
+        AWS_CREDS = credentials('aws-KrishnaIAM-keys')
     }
     stages {
-        stage('checkout') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/krishnamonani/task-14-tf-jenkins.git'
             }
@@ -13,8 +14,8 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 withEnv([
-                    "AWS_ACCESS_KEY_ID=${AWS_CREDENTIALS_USR}",
-                    "AWS_SECRET_ACCESS_KEY=${AWS_CREDENTIALS_PSW}"
+                    "AWS_ACCESS_KEY_ID=${AWS_CREDS_USR}", 
+                    "AWS_SECRET_ACCESS_KEY=${AWS_CREDS_PSW}"
                 ]) {
                     sh 'terraform init'
                 }
@@ -24,8 +25,8 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 withEnv([
-                    "AWS_ACCESS_KEY_ID=${AWS_CREDENTIALS_USR}",
-                    "AWS_SECRET_ACCESS_KEY=${AWS_CREDENTIALS_PSW}"
+                    "AWS_ACCESS_KEY_ID=${AWS_CREDS_USR}", 
+                    "AWS_SECRET_ACCESS_KEY=${AWS_CREDS_PSW}"
                 ]) {
                     sh 'terraform plan'
                 }
@@ -35,12 +36,12 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 withEnv([
-                    "AWS_ACCESS_KEY_ID=${AWS_CREDENTIALS_USR}",
-                    "AWS_SECRET_ACCESS_KEY=${AWS_CREDENTIALS_PSW}"
+                    "AWS_ACCESS_KEY_ID=${AWS_CREDS_USR}", 
+                    "AWS_SECRET_ACCESS_KEY=${AWS_CREDS_PSW}"
                 ]) {
                     sh 'terraform apply -auto-approve'
                 }
             }
-        }   
+        }
     }
 }
